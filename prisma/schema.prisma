@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 用户模型
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // 关系
+  todos         Todo[]
+  categories    Category[]
+  sessions      Session[]
+  accounts      Account[]
+
+  @@map("users")
+}
+
+// NextAuth.js Account模型
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+// NextAuth.js Session模型
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// NextAuth.js VerificationToken模型
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// Todo待办事项模型
+model Todo {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  completed   Boolean   @default(false)
+  priority    Priority  @default(MEDIUM)
+  dueDate     DateTime?
+  userId      String
+  categoryId  String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // 关系
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category   Category?   @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  tags       TodoTag[]
+
+  @@index([userId])
+  @@index([completed])
+  @@index([priority])
+  @@index([dueDate])
+  @@index([userId, completed])
+  @@map("todos")
+}
+
+// 优先级枚举
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+// 分类模型
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  color     String   @default("#3B82F6")
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 关系
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  todos Todo[]
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("categories")
+}
+
+// 标签模型
+model Tag {
+  id        String   @id @default(cuid())
+  name      String
+  color     String   @default("#10B981")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 关系
+  todos TodoTag[]
+
+  @@unique([name])
+  @@map("tags")
+}
+
+// Todo-Tag多对多关系
+model TodoTag {
+  todoId String
+  tagId  String
+
+  todo Todo @relation(fields: [todoId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([todoId, tagId])
+  @@map("todo_tags")
+}

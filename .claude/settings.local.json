@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(npx create-next-app:*)",
+      "Bash(npm install:*)",
+      "Bash(npx prisma generate:*)",
+      "Bash(npx prisma:*)",
+      "Bash(npm run db:seed:*)",
+      "Bash(npm run dev:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git remote add origin:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(ssh:*)",
+      "Bash(ssh-keygen:*)",
+      "Bash(npm run build:*)",
+      "Bash(powershell -Command \"Remove-Item -Path .next -Recurse -Force -ErrorAction SilentlyContinue; npm run build\":*)",
+      "Bash(npx tsc:*)",
+      "Bash(tree:*)",
+      "Bash(git config:*)",
+      "Bash(findstr:*)",
+      "Bash(Remove-Item:*)",
+      "Bash(git init:*)"
+    ]
+  },
+  "outputStyle": "Explanatory"
+}
