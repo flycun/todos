@@ -1,10 +1,12 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.1.x"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")    // 6543 事务池（应用运行时查询）
+  directUrl = env("DIRECT_URL")      // 5432 会话池（迁移 / db push，绕过 pgbouncer 限制）
 }
 
 // 用户模型

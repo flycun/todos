@@ -40,3 +40,8 @@ next-env.d.ts
 ./claude
 .github
 docs
+
+# Tencent Cloud EdgeOne
+.env
+.edgeone/*
+.tef_dist/* 
